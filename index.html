@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Market News OBS</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+}
+
+#news {
+    color: white;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="news">Loading news...</div>
+
+<script>
+
+const API_URL = "https://fancy-cake-37f1.protector-ebay.workers.dev";
+
+let news = [];
+let current = 0;
+
+async function loadNews() {
+    try {
+        const response = await fetch(API_URL);
+        news = await response.json();
+
+        if(news.length > 0) {
+            showNews();
+        }
+
+    } catch(e) {
+        document.getElementById("news").textContent =
+            "Unable to load news";
+    }
+}
+
+function showNews() {
+
+    if(news.length === 0) return;
+
+    let text = news[current].title;
+
+    if(text.length > 150) {
+        text = text.substring(0,147) + "...";
+    }
+
+    document.getElementById("news").textContent = text;
+
+    current++;
+
+    if(current >= news.length) {
+        current = 0;
+    }
+}
+
+loadNews();
+
+setInterval(showNews, 20000);
+
+setInterval(loadNews, 3600000);
+
+</script>
+
+</body>
+</html>
